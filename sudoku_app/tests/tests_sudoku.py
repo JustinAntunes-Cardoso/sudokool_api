@@ -1,6 +1,6 @@
 import copy
 from django.test import TestCase
-from ..sudoku.sudoku_logic import ValidSudoku, SodukuPuzzleGenerator, ValidSodukuPuzzle
+from ..sudoku.sudoku_logic import ValidSudoku, SudokuPuzzleGenerator, ValidSodukuPuzzle
 
 TEST_BOARD = [
     [5, 3, 0, 0, 7, 0, 0, 0, 0],
@@ -56,7 +56,7 @@ class TestValidity(TestCase):
 class TestBoardSetup(TestCase):
     def test_next_empty_cell(self):
         # Test if function returns position of the empty cell
-        empty = SodukuPuzzleGenerator()
+        empty = SudokuPuzzleGenerator()
         row, col = empty.nextEmptyCell(TEST_BOARD)
         # Test if function return -1 if board is full
         rowFull, colFull = empty.nextEmptyCell(FULL_BOARD)
@@ -72,7 +72,7 @@ class TestBoardSetup(TestCase):
     def test_poke_holes(self):
 
         # Test if holes poked in the puzzle the same amount as needed
-        sudoku = SodukuPuzzleGenerator()
+        sudoku = SudokuPuzzleGenerator()
         board = copy.deepcopy(FULL_BOARD)
         removedCells, pokedBoard = sudoku.pokeHoles(board, 25)
         holes = 0
@@ -86,7 +86,7 @@ class TestBoardSetup(TestCase):
     def test_solved_board(self):
 
         # Test to see if puzzle can fill itself
-        sudoku = SodukuPuzzleGenerator()
+        sudoku = SudokuPuzzleGenerator()
 
         board = sudoku.newSolvedBoard()
         zeros = 0
@@ -107,7 +107,7 @@ class TestBoardSetup(TestCase):
     def test_solved_board(self):
 
         # Test to see if puzzle can fill itself
-        sudoku = SodukuPuzzleGenerator()
+        sudoku = SudokuPuzzleGenerator()
 
         removedVals, startingBoard, solvedBoard = sudoku.newStartingBoard(25)
         holes = 0

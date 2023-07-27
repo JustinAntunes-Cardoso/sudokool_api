@@ -1,23 +1,44 @@
-from django.shortcuts import render
-from rest_framework.views import APIView
-from . models import *
 from rest_framework.response import Response
-from . serializer import *
+from rest_framework.decorators import api_view
+from . sudoku.sudoku_logic import SudokuPuzzleGenerator, ValidSodukuPuzzle
+import random
+import asyncio
 
-# Create your views here.
+# generates sudoku puzzle of certain level of difficulty based on api
 
 
-class ReactView(APIView):
-    def get(self, request, *args):
-        output = [{
-            "board": output.board,
-            "answer": output.answer
-        } for output in SudokuBoard.objects.all()]
+def getSudokuPuzzle(diff='easy'):
+    # Creates Puzzle
+    sudoku = SudokuPuzzleGenerator()
+    # Checks for single solution
+    check = ValidSodukuPuzzle()
+    holes = 0
+    # Sets the amount of holes in the puzle based on diff
+    if diff == 'easy':
+        holes = random.randint(15, 20)
+    elif diff == 'medium':
+        holes = random.randint(25, 30)
+    elif diff == 'hard':
+        holes = random.randint(32, 38)
+    else:
+        holes = random.randint(40, 42)
 
-        return Response(output)
+    removedVals, startingBoard, solvedBoard = sudoku.newStartingBoard(holes)
+    # Runs until a single solution is found
+    while check.multiplePossibleSolutions(startingBoard) == False:
+        removedVals, startingBoard, solvedBoard = sudoku.newStartingBoard(
+            holes)
 
-    def post(self, request):
-        serializer = SudokuBoardSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data)
+    return removedVals, startingBoard, solvedBoard
+
+
+@api_view(['GET'])
+def getData(request, arg):
+    vals, board, solved = getSudokuPuzzle(arg)
+    response_data = {
+        'values': vals,
+        'board': board,
+        'solved': solved
+    }
+
+    return Response(response_data)
