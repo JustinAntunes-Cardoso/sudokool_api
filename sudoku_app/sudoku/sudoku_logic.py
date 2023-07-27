@@ -39,9 +39,8 @@ class ValidSudoku:
 # Generates Sudoku Puzzle
 
 
-class SodukuPuzzleGenerator:
-    def __init__(self, difficulty='easy'):
-        self.diff = difficulty
+class SudokuPuzzleGenerator:
+    def __init__(self) -> None:
         self.counter = 0
         self.numList = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
@@ -221,7 +220,8 @@ class ValidSodukuPuzzle:
             board = copy.deepcopy(boardToCheck)
 
             thisSolution = self.fillFromList(board, emptyCellClone)
-            possibleSolutions.append(','.join(map(str, thisSolution)))
+            if isinstance(thisSolution, list):
+                possibleSolutions.append(','.join(map(str, thisSolution)))
 
             if len(set(possibleSolutions)) > 1:
                 return True
