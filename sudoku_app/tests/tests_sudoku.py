@@ -1,5 +1,6 @@
+import copy
 from django.test import TestCase
-from ..sudoku.sudoku_logic import ValidSudoku, SodukuPuzzleGenerator
+from ..sudoku.sudoku_logic import ValidSudoku, SodukuPuzzleGenerator, ValidSodukuPuzzle
 
 TEST_BOARD = [
     [5, 3, 0, 0, 7, 0, 0, 0, 0],
@@ -72,7 +73,8 @@ class TestBoardSetup(TestCase):
 
         # Test if holes poked in the puzzle the same amount as needed
         sudoku = SodukuPuzzleGenerator()
-        removedCells, pokedBoard = sudoku.pokeHoles(FULL_BOARD, 25)
+        board = copy.deepcopy(FULL_BOARD)
+        removedCells, pokedBoard = sudoku.pokeHoles(board, 25)
         holes = 0
         for row in pokedBoard:
             holes += row.count(0)
@@ -119,3 +121,22 @@ class TestBoardSetup(TestCase):
         self.assertEqual(len(removedVals), 25)
         self.assertEqual(holes, 25)
         self.assertEqual(zeros, 0)
+
+
+class TestMultipleSolutions(TestCase):
+
+    def test_empty_cells(self):
+        emptyCells = ValidSodukuPuzzle().emptyCellCoords(TEST_BOARD)
+        fullCells = ValidSodukuPuzzle().emptyCellCoords(FULL_BOARD)
+
+        self.assertEqual(len(emptyCells), 51)
+        self.assertEqual(len(fullCells), 0)
+
+    def test_next_empty_cell(self):
+        # abstract empty cells
+        emptyCells = ValidSodukuPuzzle().emptyCellCoords(TEST_BOARD)
+
+        # Gives next empty cell
+        nextEmpty = ValidSodukuPuzzle().nextStillEmptyCell(TEST_BOARD, emptyCells)
+        self.assertEqual(nextEmpty['rowIndex'], 0)
+        self.assertEqual(nextEmpty['colIndex'], 2)

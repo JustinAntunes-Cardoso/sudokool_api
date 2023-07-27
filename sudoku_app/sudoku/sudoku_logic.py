@@ -43,7 +43,7 @@ class SodukuPuzzleGenerator:
     def __init__(self, difficulty='easy'):
         self.diff = difficulty
         self.counter = 0
-        self.numArray = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+        self.numList = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
         self.BLANK_BOARD = [
             [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -88,7 +88,7 @@ class SodukuPuzzleGenerator:
             return startingBoard
 
         # Shuffled [0 - 9] list fills board randomly each pass
-        for num in shuffle(self.numArray):
+        for num in shuffle(self.numList):
             self.counter += 1
             if self.counter > 20_000_000:
                 raise RecursionError('Recursion Timeout')
@@ -165,3 +165,65 @@ class SodukuPuzzleGenerator:
 
         except RuntimeError:
             return self.newStartingBoard(holes)
+
+
+class ValidSodukuPuzzle:
+    def __init__(self) -> None:
+        self.numList = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+    # Get a list of all empty cells in the board from top-left to bottom-right
+    def emptyCellCoords(self, startingBoard):
+        listOfEmptyCells = []
+        for row in range(9):
+            for col in range(9):
+                if startingBoard[row][col] == 0:
+                    listOfEmptyCells.append({'rowIndex': row, 'colIndex': col})
+        return listOfEmptyCells
+
+    # As numbers get placed, not all of the initial cells are still empty.
+    # This will find the next still empty cell in the list
+    def nextStillEmptyCell(self, startingBoard, emptyCellList):
+        for coords in emptyCellList:
+            if startingBoard[coords['rowIndex']][coords['colIndex']] == 0:
+                return {'rowIndex': coords['rowIndex'], 'colIndex': coords['colIndex']}
+
+        return False
+
+    # This will attempt to solve the puzzle by placing values into the board in the order that
+    # the empty cells list presents
+    def fillFromList(self, startingBoard, emptyCellList):
+        emptyCell = self.nextStillEmptyCell(startingBoard, emptyCellList)
+        pokeCounter = 0
+        isValid = ValidSudoku()
+        if not emptyCell:
+            return startingBoard
+        for num in shuffle(self.numList):
+            pokeCounter += 1
+            if pokeCounter > 60_000_000:
+                raise RecursionError('Poke Timeout')
+            if isValid.safeToPlace(startingBoard, emptyCell['rowIndex'], emptyCell['colIndex'], num):
+                startingBoard[emptyCell['rowIndex']
+                              ][emptyCell['colIndex']] = num
+                if self.fillFromList(startingBoard, emptyCellList):
+                    return startingBoard
+                startingBoard[emptyCell['rowIndex']][emptyCell['colIndex']] = 0
+
+        return False
+
+    def multiplePossibleSolutions(self, boardToCheck):
+        possibleSolutions = []
+        emptyCellList = self.emptyCellCoords(boardToCheck)
+        for index in range(len(emptyCellList)):
+            # Rotate a clone of the emptyCellList by one for each iteration
+            emptyCellClone = copy.deepcopy(emptyCellList)
+            startingPoint = emptyCellClone.pop(index)
+            emptyCellClone.insert(0, startingPoint)
+            board = copy.deepcopy(boardToCheck)
+
+            thisSolution = self.fillFromList(board, emptyCellClone)
+            possibleSolutions.append(','.join(map(str, thisSolution)))
+
+            if len(set(possibleSolutions)) > 1:
+                return True
+
+        return False
