@@ -1,13 +1,24 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from . sudoku.sudoku_logic import SudokuPuzzleGenerator, ValidSodukuPuzzle
+from rest_framework import status
 import random
-import asyncio
+
+# Custom error if Difficulty is not easy, medium or hard.
+
+
+class InvalidDifficultyException(ValueError):
+    pass
 
 # generates sudoku puzzle of certain level of difficulty based on api
 
 
 def getSudokuPuzzle(diff='easy'):
+    # Error checking diff set.
+    if diff not in ['easy', 'medium', 'hard']:
+        raise InvalidDifficultyException(
+            "Invalid difficulty. Valid options are 'easy', 'medium', or 'hard'.")
+
     # Creates Puzzle
     sudoku = SudokuPuzzleGenerator()
     # Checks for single solution
@@ -34,11 +45,19 @@ def getSudokuPuzzle(diff='easy'):
 
 @api_view(['GET'])
 def getData(request, arg):
-    vals, board, solved = getSudokuPuzzle(arg)
-    response_data = {
-        'values': vals,
-        'board': board,
-        'solved': solved
-    }
+    try:
+        vals, board, solved = getSudokuPuzzle(arg)
+        response_data = {
+            'values': vals,
+            'board': board,
+            'solved': solved
+        }
 
-    return Response(response_data)
+        return Response(response_data, status=status.HTTP_200_OK)
+
+    except InvalidDifficultyException as e:
+        # Get the error message from the exception (optional)
+        error_message = str(e)
+        # You can customize the error response as needed
+        error_data = {'error': error_message}
+        return Response(error_data, status=status.HTTP_400_BAD_REQUEST)
