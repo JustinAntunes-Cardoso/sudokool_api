@@ -4,23 +4,23 @@ The Sudokool Backend API is a Django-based API that generates Sudoku puzzles of 
 
 ## Table of Contents
 
-- [Getting Started](#started)
+- [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
-  - [Running the Server](#server)
+  - [Running the Server](#running-the-server)
 - [Endpoints](#endpoints)
-  - [Generate Sudoku Puzzle](#puzzle)
-- [Response Format](#format)
-- [Error Handling](#error)
+  - [Generate Sudoku Puzzle](#generate-sudoku-puzzle)
+- [Response Format](#response-format)
+- [Error Handling](#error-handling)
 
-## Getting Started {#started}
+## Getting Started
 
-#### Prerequisites {#prerequisites}
+#### Prerequisites
 
 - Python 3.10 or higher
 - Django 4.2.2
 
-#### Installation {#installation}
+#### Installation
 
 1. Clone this repository to your local machine.
 2. Install the required dependencies using pip:
@@ -29,7 +29,7 @@ The Sudokool Backend API is a Django-based API that generates Sudoku puzzles of 
 pip install -r requirements.txt
 ```
 
-### Running the Server {#server}
+### Running the Server
 
 To run the development server, execute the following command:
 
@@ -39,9 +39,9 @@ python manage.py runserver
 
 The API server will now be running at _'http://127.0.0.1:8000/'_.
 
-## Endpoints {#endpoints}
+## Endpoints
 
-### Generate Sudoku Puzzle {#puzzle}
+### Generate Sudoku Puzzle
 
 - _URL: `/api/sudoku/<difficulty>/`_
 - _Method:_ GET
@@ -50,7 +50,7 @@ The API server will now be running at _'http://127.0.0.1:8000/'_.
 - _Response:_
   - A JSON object containing the generated Sudoku puzzle and its solution.
 
-## Response Format {#format}
+## Response Format
 
 The response for the "Generate Sudoku Puzzle" endpoint will have the following format:
 
@@ -69,7 +69,7 @@ The response for the "Generate Sudoku Puzzle" endpoint will have the following f
 
 The `board` field represents the Sudoku puzzle with missing values (0 for missing values), and the `solved` field represents the solution to the puzzle.
 
-## Error Handling {#error}
+## Error Handling
 
 If there is an error generating the Sudoku puzzle, the API will respond with an appropriate error message and status code.
 
@@ -77,7 +77,7 @@ Sample error response:
 
 ```json
 {
-	"error": "Difficulty not recognized",
+	"error": "Invalid difficulty. Valid options are 'easy', 'medium', or 'hard'.",
 	"status": 400
 }
 ```
