@@ -16,10 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-# from django.conf.urls import url
-from sudoku_app.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/sudoku', ReactView.as_view(), name="sudoku"),
+    path('api/sudoku/<str:arg>', include('sudoku_app.urls'))
 ]
