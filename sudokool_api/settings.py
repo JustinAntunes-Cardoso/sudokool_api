@@ -56,6 +56,11 @@ MIDDLEWARE = [
 REST_FRAMEWORK = {'DEFAULT_PERMISSION_CLASSES': [
     'rest_framework.permissions.AllowAny']}
 
+CORS_ALLOWED_ORIGINS = [
+    "https://sudokool.vercel.app",
+    "https://sudokool-api.vercel.app"
+]
+
 CORS_ORIGIN_ALLOW_ALL = True
 
 ROOT_URLCONF = 'sudokool_api.urls'
